@@ -1,31 +1,31 @@
 from pathlib import Path
+
 from playwright.sync_api import sync_playwright
+
+from linkedin.linkedin_agent import LinkedInAgent
 
 
 class BrowserAgent:
 
     def launch(self):
 
-        print("Launching Chrome...")
-
-        profile_path = Path("browser_profile")
+        profile = Path("browser_profile")
 
         with sync_playwright() as p:
 
             context = p.chromium.launch_persistent_context(
-                user_data_dir=str(profile_path),
+
+                user_data_dir=str(profile),
                 headless=False
+
             )
 
             page = context.new_page()
 
-            page.goto("https://www.linkedin.com/jobs")
+            linkedin = LinkedInAgent()
 
-            print("LinkedIn Jobs opened.")
+            linkedin.search_jobs(page)
 
-            input("Press ENTER to close browser...")
+            input("\nPress ENTER to close browser...")
 
-            try:
-                context.close()
-            except Exception:
-                pass
+            context.close()
